@@ -26,6 +26,8 @@ Neo4j is used to store connections between attendees.
 These connections are undirected (if A is connected to B, then B is also connected to A).  
 All attendees in Neo4j already exist in the MySQL database.  
 
+**!** Update the MySQL password in db_connect.py before running the application.
+
 Run the Application:  
 --  python main.py  
 
