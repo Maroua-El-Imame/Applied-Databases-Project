@@ -11,7 +11,7 @@ from mysql_functions import (
     view_attendees_by_company,
     add_new_attendee,
 )
-
+from db_connect import get_neo4j_driver
 
 
 # Display main menu with options for the user to choose from
