@@ -35,6 +35,8 @@ The goal of this project is to design and implement a database-driven applicatio
 - [Environment Setup & App Running](#environment-setup--app-running)
 - [Troubleshooting and Debugging Notes](#troubleshooting-and-debugging-notes)
 - [Innovation](#innovation)
+- [Contact](#contact)
+
 
 
 
@@ -75,7 +77,7 @@ Each step was implemented progressively, with functionality added and tested thr
 - [✔️] **Input Validation and Error Handling**  
   Added validation for user input and handled cases such as invalid company IDs, missing companies, and empty query results.
 
-- [Processing] **Neo4j Feature Preparation**  
+- [✔️] **Neo4j Feature Preparation**  
   Added the Neo4j driver connection and prepared the project structure for graph-based attendee connection features.
 
 - [Processing] **Testing**  
@@ -102,10 +104,17 @@ Each step was implemented progressively, with functionality added and tested thr
    ```bash
     pip install -r requirements.txt
     ```
+    If package errors occur, update pip and reinstall the requirements:
+
+    ```bash
+      python -m pip install --upgrade pip
+      python -m pip install -r requirements.txt
+    ```
 
 4. Ensure MySQL Server is running.
    ```bash
    net start MySQL80
+    ```
 
 5. Update database credentials in "db_connect.py".
 
@@ -117,14 +126,65 @@ Each step was implemented progressively, with functionality added and tested thr
    password="YOUR_MYSQL_PASSWORD"
    Neo4j -
    auth=("neo4j", "YOUR_NEO4J_PASSWORD")
-
-6. Set up the MySQL database  
-
-    ```bash
     ```
 
-7. Set up Neo4j  
+6. Set up the MySQL database  
+    The file appdbproj.sql is already included in the project folder.
+
+
+    Import the SQL database file:
     ```bash
+      mysql -u root -p < appdbproj.sql
+    ```
+
+    To verify that the database imported correctly, open MySQL:
+    ```bash
+        mysql -u root -p
+    ```
+    Then run:
+
+      ```sql
+      SHOW DATABASES;
+      USE appdbproj;
+      SHOW TABLES;
+      ```
+    The conference management tables should now appear.  
+    
+
+7. Set up Neo4j  
+  Open PowerShell and move into the Neo4j bin folder:
+
+    ```bash
+    cd "C:\Users\appDB\Documents\neo4j-community-5.26.19\bin"
+    ```
+    Start the Neo4j server:
+    ```bash
+    .\neo4j.bat console
+    ```
+    Leave this terminal window open while the application is running.
+
+    When Neo4j starts successfully, the following message should appear:
+
+    ```bash
+    Remote interface available at http://localhost:7474/
+    ```
+
+    Neo4j Browser can then be accessed from:
+    ```bash
+    http://localhost:7474
+    ```
+
+    Import the Neo4j graph data:
+
+    ```powershell
+    & "C:\Users\appDB\Documents\neo4j-community-5.26.19\bin\cypher-shell.bat" -u neo4j -p YOUR_NEO4J_PASSWORD -d neo4j -f "C:\Users\appDB\Desktop\Applied Databases Project\appdbprojNeo4j.json"
+    ```
+
+   To verify the graph was imported correctly, open Neo4j Browser and run:
+
+    ```cypher
+    MATCH (a:Attendee)-[:CONNECTED_TO]-(b:Attendee)
+    RETURN a, b;
     ```
 
 8. Run the application
@@ -139,11 +199,15 @@ Each step was implemented progressively, with functionality added and tested thr
 
 ## Troubleshooting and Debugging Notes
 
+If connection issues occur, ensure:
+- MySQL80 service is running
+- Neo4j server is active
+- Database credentials in db_connect.py are correct
+- Required Python packages are installed
+
 ## Innovation
 
-The innovation and technical improvement details for this project are documented separately in `innovation.doc`  
-
-
+The innovation and technical improvement details for this project are documented separately in innovation.doc
 ## Contact  
 <br/>
 
