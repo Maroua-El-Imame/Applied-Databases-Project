@@ -5,14 +5,13 @@
 # menu / user choices only
 
 import db_connect
+from db_connect import get_neo4j_driver
 
 from mysql_functions import (
     view_speakers,
     view_attendees_by_company,
     add_new_attendee,
 )
-from db_connect import get_neo4j_driver
-
 
 # Display main menu with options for the user to choose from
 def show_menu():
@@ -33,10 +32,7 @@ def show_menu():
 
 
 # Next : 
-#def view_connected_attendees():
-
 #def add_attendee_connection():
-
 #def view_rooms():
 
 #------------------------------------------------
@@ -58,7 +54,7 @@ while True:
         add_new_attendee()
 
     elif choice == "4":
-        print("\n[Coming next] View Connected Attendees\n")
+        view_connected_attendees()
 
     elif choice == "5":
         print("\n[Coming next] Add Attendee Connection\n")  
