@@ -1,4 +1,5 @@
 # mysql_functions.py 
+# author: Maroua EL imame
 # This file stores the MySQL menu option functions.
 
 
@@ -68,7 +69,7 @@ def view_attendees_by_company():
     cursor.execute(company_query, (company_id,))
     company_result = cursor.fetchone()
 
-    # If no company is found, show an error message and stop the function, then return to ain menu. 
+    # If no company is found, show an error message and stop the function, then return to main menu. 
     if not company_result:
         print(f"Company with ID {company_id} doesn't exist")
         conn.close()
@@ -185,5 +186,3 @@ def add_new_attendee():
 
 
 
-
-    # 
