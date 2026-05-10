@@ -80,7 +80,7 @@ Each step was implemented progressively, with functionality added and tested thr
 - [✔️] **Neo4j Feature Preparation**  
   Added the Neo4j driver connection and prepared the project structure for graph-based attendee connection features.
 
-- [Processing] **Testing**  
+- [✔️] **Testing**  
   Tested implemented options, database connections, menu flow, and VM compatibility.
 
 - [ ] **Finalisation**  
@@ -91,16 +91,28 @@ Each step was implemented progressively, with functionality added and tested thr
 
 ## Environment Setup & App Running
 
-1. Download and unzip the project folder.
+Download and unzip the project folder.
 
-2.  Open Command Prompt or PowerShell in the project folder.
+1. Open the Project Folder
 
-    Example:
-    ```bash
-    cd Downloads/Applied-Databases-Project  
+    Open **Cmder**, **Command Prompt**, or **PowerShell** in the project folder.  
+      Example:
+
+    ```cmd
+      cd "C:\Users\appDB\Downloads\Applied Databases Project"
     ```
+    <br>
+
+    This project may require **three terminal windows** while testing:
+
+- **Terminal 1:** MySQL shell — used to run SQL commands after logging into MySQL.
+- **Terminal 2:** Run Neo4j server / Neo4j Browser — used for graph database setup and testing.
+- **Terminal 3:** Run the Python application
+
+<br>
    
-3. Install required Python packages:  
+3. Install required Python packages - These commands are run in the Command Prompt:
+ 
    ```bash
     pip install -r requirements.txt
     ```
@@ -134,14 +146,14 @@ Each step was implemented progressively, with functionality added and tested thr
 
     Import the SQL database file:
     ```bash
-      mysql -u root -p < appdbproj.sql
+      "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p < appdbproj.sql
     ```
 
     To verify that the database imported correctly, open MySQL:
     ```bash
-        mysql -u root -p
-    ```
-    Then run:
+      "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p    
+      ```
+    Then run the following commands inside the MySQL shell:
 
       ```sql
       SHOW DATABASES;
@@ -149,11 +161,20 @@ Each step was implemented progressively, with functionality added and tested thr
       SHOW TABLES;
       ```
     The conference management tables should now appear.  
-    
+    ```bash  
+      +---------------------+  
+      | Tables_in_appdbproj |  
+      +---------------------+
+      | attendee            |
+      | company             |
+      | registration        |
+      | room                |
+      | session             |
+      +---------------------+
+    ```
 
 7. Set up Neo4j  
-  Open PowerShell and move into the Neo4j bin folder:
-
+    Open 2nd Command Prompt and move into the Neo4j bin folder:
     ```bash
     cd "C:\Users\appDB\Documents\neo4j-community-5.26.19\bin"
     ```
@@ -174,26 +195,40 @@ Each step was implemented progressively, with functionality added and tested thr
     http://localhost:7474
     ```
 
-    Import the Neo4j graph data:
+    Import the Neo4j graph data in a new Command Prompt, using your own neo4j password
 
     ```powershell
     & "C:\Users\appDB\Documents\neo4j-community-5.26.19\bin\cypher-shell.bat" -u neo4j -p YOUR_NEO4J_PASSWORD -d neo4j -f "C:\Users\appDB\Desktop\Applied Databases Project\appdbprojNeo4j.json"
     ```
 
-   To verify the graph was imported correctly, open Neo4j Browser and run:
+   To verify the graph was imported correctly, open Neo4j Browser and run - The following query is run inside Neo4j Browser:
 
     ```cypher
     MATCH (a:Attendee)-[:CONNECTED_TO]-(b:Attendee)
     RETURN a, b;
     ```
 
-8. Run the application
+8. Open the project folder and run the application
 
     ```bash
     python main.py
     ```
+    The conference management Menu should now appear  
 
     ```bash
+    Conference Management
+    ---------------------
+
+    MENU
+    ====
+    1 - View Speakers & Sessions
+    2 - View Attendees by Company
+    3 - Add New Attendee
+    4 - View Connected Attendees
+    5 - Add Attendee Connection
+    6 - View Rooms
+    x - Exit application
+    Choice:
     ```
 
 
@@ -202,7 +237,7 @@ Each step was implemented progressively, with functionality added and tested thr
 If connection issues occur, ensure:
 - MySQL80 service is running
 - Neo4j server is active
-- Database credentials in db_connect.py are correct
+- Database credentials in db_connect.py and in Neo4j graph data Import are correct
 - Required Python packages are installed
 
 ## Innovation

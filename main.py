@@ -4,14 +4,10 @@
 # This is the main file of the conference management application. 
 # menu / user choices only
 
-import db_connect
-from db_connect import get_neo4j_driver
 
-from mysql_functions import (
-    view_speakers,
-    view_attendees_by_company,
-    add_new_attendee,
-)
+from mysql_functions import (view_speakers, view_attendees_by_company,add_new_attendee, view_rooms)
+
+from neo4j_functions import (view_connected_attendees, add_attendee_connection)
 
 # Display main menu with options for the user to choose from
 def show_menu():
@@ -28,14 +24,6 @@ def show_menu():
     print("6 - View Rooms")
     print("x - Exit application")
 
-
-
-
-# Next : 
-#def add_attendee_connection():
-#def view_rooms():
-
-#------------------------------------------------
 
 
 # Run main application  
@@ -57,10 +45,10 @@ while True:
         view_connected_attendees()
 
     elif choice == "5":
-        print("\n[Coming next] Add Attendee Connection\n")  
+        add_attendee_connection()
 
     elif choice == "6":
-        print("\n[Coming next] View Rooms\n")
+        view_rooms()
 
     elif choice == "x":
         print("\nExiting application...")

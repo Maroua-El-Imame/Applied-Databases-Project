@@ -21,13 +21,13 @@ def view_speakers():
     """
 
     cursor.execute(query, ("%" + name + "%",))
-    results = cursor.fetchall() 
+    rooms_cache = cursor.fetchall()
 
     print("\nSession Details For :", name)
     print("-----------------------------------")
 
-    if results:
-        for speaker, session, room in results:
+    if rooms_cache:
+        for speaker, session, room in rooms_cache:
             print(f"{speaker:<20} | {session:<30} | {room}")
     else:
         print("No speakers found of that name")
@@ -184,5 +184,38 @@ def add_new_attendee():
     cursor.close()
     conn.close()
 
+# function for option 6 in menu to view rooms
 
+rooms_cache = None
 
+def view_rooms():
+    global rooms_cache
+
+    if rooms_cache is None:
+        conn = get_mysql_connection()
+        cursor = conn.cursor()
+
+        query = """
+        SELECT roomID, roomName, capacity
+        FROM room
+        ORDER BY roomID
+        """
+
+        cursor.execute(query)
+        rooms_cache = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+    print("\nRooms")
+    print("------")
+
+    if rooms_cache:
+        print(f"{'RoomID':<8} | {'RoomName':<20} | {'Capacity'}")
+        print("-" * 45)
+
+        for room_id, room_name, capacity in rooms_cache:
+            print(f"{room_id:<8} | {room_name:<20} | {capacity}")
+
+    else:
+        print("No rooms found")
