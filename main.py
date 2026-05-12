@@ -5,9 +5,18 @@
 # menu / user choices only
 
 
-from mysql_functions import (view_speakers, view_attendees_by_company,add_new_attendee, view_rooms)
+from mysql_functions import ( 
+    view_speakers, 
+    view_attendees_by_company,
+    add_new_attendee, 
+    view_rooms,
+    generate_attendance_by_room_report
+)
 
-from neo4j_functions import (view_connected_attendees, add_attendee_connection)
+from neo4j_functions import ( 
+    view_connected_attendees, 
+    add_attendee_connection
+)
 
 # Display main menu with options for the user to choose from
 def show_menu():
@@ -22,6 +31,7 @@ def show_menu():
     print("4 - View Connected Attendees")
     print("5 - Add Attendee Connection")
     print("6 - View Rooms")
+    print("7 - Generate Attendance by Room Report")
     print("x - Exit application")
 
 
@@ -50,9 +60,12 @@ while True:
     elif choice == "6":
         view_rooms()
 
+    elif choice == "7":
+        generate_attendance_by_room_report()
+
     elif choice == "x":
         print("\nExiting application...")
         break
 
     else:
-        print("\nInvalid choice. Please enter a number from 1 to 6, or x to exit.")
+        print("\nInvalid choice. Please enter a number from 1 to 7, or x to exit.")

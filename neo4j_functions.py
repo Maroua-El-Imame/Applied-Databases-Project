@@ -149,12 +149,3 @@ def add_attendee_connection():
     driver.close()
 
 
-
-
-
-
-
-
-
-# COMING NEXT:
-# def add_attendee_connection():
