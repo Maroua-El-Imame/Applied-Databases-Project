@@ -63,7 +63,10 @@ Applied Databases Project/
 **Folder design:**  
 The main.py file handles user interaction and menu navigation, while mysql_functions.py and neo4j_functions.py contain all database related logic.  
 This separation improves maintainability, as changes to database queries or logic can be made without affecting the main application flow.  
-It also reduces the risk of introducing errors when updating individual components.
+It also reduces the risk of introducing errors when updating individual components.  
+
+**Generated outputs:**   
+Sample generated outputs (PDF report and graph) are included in the repository to demonstrate the functionality of the reporting feature.  
 
 
 ## Project Workflow
