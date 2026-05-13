@@ -29,8 +29,7 @@ def view_connected_attendees():
     cursor.execute(query, (attendee_id,))
     mysql_row = cursor.fetchone()
 
-    cursor.close()
-    conn.close()
+
 
     if not mysql_row:
         print("*** ERROR *** Attendee does not exist")
@@ -65,87 +64,109 @@ def view_connected_attendees():
             print("No connections")
         else:
             print("These attendees are connected:")
-            for person in connections:
-                print(person)
+            for connected_id in connections:
+                cursor.execute(
+                """
+                SELECT attendeeName
+                FROM attendee
+                WHERE attendeeID = %s
+                """,
+                (connected_id,)
+                )  
+
+                connected_row = cursor.fetchone()
+
+                if connected_row:
+                    print(f"{connected_id} | {connected_row[0]}")
+                else:
+                    print(f"{connected_id} | Name not found")
+
+    cursor.close()
+    conn.close()
+
 
     driver.close()
+
 
 
 # function for option 5 in menu to add attendee connection
 
 def add_attendee_connection():
-    attendee1_id = input("\nEnter Attendee 1 ID : ").strip()
-    attendee2_id = input("Enter Attendee 2 ID : ").strip()
+    while True:
+        attendee1_id = input("\nEnter Attendee 1 ID : ").strip()
+        attendee2_id = input("Enter Attendee 2 ID : ").strip()
 
     # check numeric IDs
-    if not attendee1_id.isdigit() or not attendee2_id.isdigit():
-        print("*** ERROR *** Attendee IDs must be numbers")
-        return
+        if not attendee1_id.isdigit() or not attendee2_id.isdigit():
+            print("*** ERROR *** Attendee IDs must be numbers")
+            continue
 
-    attendee1_id = int(attendee1_id)
-    attendee2_id = int(attendee2_id)
+        attendee1_id = int(attendee1_id)
+        attendee2_id = int(attendee2_id)
 
-    # check attendee is not connecting to themselves
-    if attendee1_id == attendee2_id:
-        print("*** ERROR *** An attendee cannot connect to him/herself")
-        return
+        # check attendee is not connecting to themselves
+        if attendee1_id == attendee2_id:
+            print("*** ERROR *** An attendee cannot connect to him/herself")
+            continue
 
     # check both attendees exist in MySQL
-    conn = get_mysql_connection()
-    cursor = conn.cursor()
+        conn = get_mysql_connection()
+        cursor = conn.cursor()
 
-    query = """
-    SELECT attendeeID
-    FROM attendee
-    WHERE attendeeID IN (%s, %s)
-    """
+        query = """
+        SELECT attendeeID
+        FROM attendee
+        WHERE attendeeID IN (%s, %s)
+        """
 
-    cursor.execute(query, (attendee1_id, attendee2_id))
-    mysql_results = cursor.fetchall()
+        cursor.execute(query, (attendee1_id, attendee2_id))
+        mysql_results = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
+        cursor.close()
+        conn.close()
 
-    if len(mysql_results) != 2:
-        print("*** ERROR *** One or both attendee IDs do not exist")
-        return
+        if len(mysql_results) != 2:
+            print("*** ERROR *** One or both attendee IDs do not exist")
+            continue
 
-    driver = get_neo4j_driver()
+        driver = get_neo4j_driver()
 
-    with driver.session() as session:
+        with driver.session() as session:
 
         # check if either attendee is already connected to anyone
-        check_result = session.run(
-            """
-            MATCH (a:Attendee)
-            WHERE a.AttendeeID IN [$attendee1_id, $attendee2_id]
-            OPTIONAL MATCH (a)-[:CONNECTED_TO]-(:Attendee)
-            RETURN count(*) AS total_nodes, count { (a)-[:CONNECTED_TO]-(:Attendee) } AS existing_connections
+            check_result = session.run(
+                """
+                MATCH (a:Attendee {AttendeeID: $attendee1_id}),
+                    (b:Attendee {AttendeeID: $attendee2_id})
+            OPTIONAL MATCH (a)-[:CONNECTED_TO]-(b)
+            RETURN count(b) AS existing_connections
             """,
             attendee1_id=attendee1_id,
             attendee2_id=attendee2_id
-        )
+            )
 
-        record = check_result.single()
 
-        if record["existing_connections"] > 0:
-            print("*** ERROR *** These attendees are already connected")
-            driver.close()
-            return
+            record = check_result.single()
+
+            if record["existing_connections"] > 0:
+                print("*** ERROR *** These attendees are already connected")
+                driver.close()
+                continue
 
         # create nodes if they do not already exist in Neo4j, then connect them
-        session.run(
-            """
-            MERGE (a:Attendee {AttendeeID: $attendee1_id})
-            MERGE (b:Attendee {AttendeeID: $attendee2_id})
-            MERGE (a)-[:CONNECTED_TO]->(b)
-            """,
-            attendee1_id=attendee1_id,
-            attendee2_id=attendee2_id
-        )
+            session.run(
+                """
+                MERGE (a:Attendee {AttendeeID: $attendee1_id})
+                MERGE (b:Attendee {AttendeeID: $attendee2_id})
+                MERGE (a)-[:CONNECTED_TO]->(b)
+                """,
+                attendee1_id=attendee1_id,
+                attendee2_id=attendee2_id
+            )
 
-        print(f"Attendee {attendee1_id} is now connected to Attendee {attendee2_id}")
+            print(f"Attendee {attendee1_id} is now connected to Attendee {attendee2_id}")
 
-    driver.close()
+        driver.close()
+        return
 
 
